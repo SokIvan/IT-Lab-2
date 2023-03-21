@@ -1,0 +1,12 @@
+﻿  Double_union.cpp
+C:\Users\ivans\OneDrive\Рабочий стол\Itlb\IT-Lab-2\new_double_3\Double_union\Double_union\SinCosFunc.h(106,28): warning C4293: >>: отрицательное или слишком большое смещение; поведение не определено
+C:\Users\ivans\OneDrive\Рабочий стол\Itlb\IT-Lab-2\new_double_3\Double_union\Double_union\Floating_Point.h(195,37): warning C4244: аргумент: преобразование "uint64_t" в "const double", возможна потеря данных
+C:\Users\ivans\OneDrive\Рабочий стол\Itlb\IT-Lab-2\new_double_3\Double_union\Double_union\Floating_Point.h(221): message : выполняется компиляция ссылки на экземпляр шаблон функции "Floating_Point<11,52> Log2<11,52>(Floating_Point<11,52> &)"
+C:\Users\ivans\OneDrive\Рабочий стол\Itlb\IT-Lab-2\new_double_3\Double_union\Double_union\Double_union.cpp(17,12): message : выполняется компиляция ссылки на экземпляр шаблон функции "Floating_Point<11,52> LogE<11,52>(Floating_Point<11,52> &)"
+C:\Users\ivans\OneDrive\Рабочий стол\Itlb\IT-Lab-2\new_double_3\Double_union\Double_union\SinCosFunc.h(117,62): warning C4244: инициализация: преобразование "uint64_t" в "unsigned int", возможна потеря данных
+C:\Users\ivans\OneDrive\Рабочий стол\Itlb\IT-Lab-2\new_double_3\Double_union\Double_union\SinCosFunc.h(309): message : выполняется компиляция ссылки на экземпляр шаблон функции "void PAYNE_HANEK<11,52>(Floating_Point<11,52> &,int &)"
+C:\Users\ivans\OneDrive\Рабочий стол\Itlb\IT-Lab-2\new_double_3\Double_union\Double_union\Double_union.cpp(19,16): message : выполняется компиляция ссылки на экземпляр шаблон функции "Floating_Point<11,52> MY_COS<11,52>(Floating_Point<11,52> &)"
+C:\Users\ivans\OneDrive\Рабочий стол\Itlb\IT-Lab-2\new_double_3\Double_union\Double_union\SinCosFunc.h(139,64): warning C4244: +=: преобразование "double" в "unsigned int", возможна потеря данных
+C:\Users\ivans\OneDrive\Рабочий стол\Itlb\IT-Lab-2\new_double_3\Double_union\Double_union\SinCosFunc.h(213,8): warning C4244: инициализация: преобразование "uint64_t" в "int", возможна потеря данных
+C:\Users\ivans\OneDrive\Рабочий стол\Itlb\IT-Lab-2\new_double_3\Double_union\Double_union\SinCosFunc.h(218,56): warning C4244: +=: преобразование "double" в "uint64_t", возможна потеря данных
+  Double_union.vcxproj -> C:\Users\ivans\OneDrive\Рабочий стол\Itlb\IT-Lab-2\new_double_3\Double_union\x64\Debug\Double_union.exe

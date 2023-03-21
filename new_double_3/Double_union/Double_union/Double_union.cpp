@@ -6,8 +6,12 @@
 
 int main()
 {
-	double x = 1244.76;
+	double x = 12.4124;
 	Floating_Point<11, 52> CO(x), SI(x), L(x);
+
+	int x1 = 2;
+
+	cout << "check is " << check_bit(x1, 1) << endl;
 
 	cout << L.D.f << endl;
 	L = LogE(L);

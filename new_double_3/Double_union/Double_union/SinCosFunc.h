@@ -126,14 +126,18 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 // bit: DIV_2_ON_PI[((jk+31)/32)*32+64:((jk+31)/32)*32+96] -> M[2][x:32] и M[3][0:x]
 // bit: DIV_2_ON_PI[((jk+31)/32)*32+96:jk+128] -> M[3][x:32]
 
+	/*
 	int nn = 0;
 	for (int s = 0;s<4;s++,nn+=32)
 		for (int it = jk; it < ((jk + 31) / 32) * 32+nn; it++)
 		{
 			M[s] += check_bit(DIV_2_ON_PI[((it + 31) / 32) * 32], it % 32);
 		}
-
-
+		*/
+	for (int i = 0; i < 128; i++)
+	{
+		M[i / 32] += check_bit(DIV_2_ON_PI[(i + jk) / 32],(i+jk)%32) * pow(2,i%32);                         ///Новый код
+	}                                                                         /// M[1] и M[2] всегда получаются 0
 
 
 
@@ -193,14 +197,28 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 	cout << "for " << x.D.ex-1023 + m + 1 << " to " << x.D.ex-1023 + m + 53 << endl;
 	unsigned int fc[] = { 
 		f(k5) ,
-		(f(f(k4) + c(k5))) << 32,
-		(f(f(k3) + c(k4) + c(f(k4) + c(k5)))) << 64,
-		(f(f(k2) + c(k3) + c(f(k4) + c(f(k3) + c(k4) + c(f(k4) + c(k5)))))) << 96,
-		(f(f(k1) + c(k2) + c(f(k4) + c(f(k2) + c(k3) + c(f(k4) + c(f(k3) + c(k4) + c(f(k4) + c(k5)))))))) << 128,
-		(f(c(k1) + c(f(k1) + c(k2) + c(f(k4) + c(f(k2) + c(k3) + c(f(k4) + c(f(k3) + c(k4) + c(f(k4) + c(k5))))))))) << 160
+		(f(f(k4) + c(k5))),
+		(f(f(k3) + c(k4) + c(f(k4) + c(k5)))),
+		(f(f(k2) + c(k3) + c(f(k4) + c(f(k3) + c(k4) + c(f(k4) + c(k5)))))),
+		(f(f(k1) + c(k2) + c(f(k4) + c(f(k2) + c(k3) + c(f(k4) + c(f(k3) + c(k4) + c(f(k4) + c(k5)))))))),
+		(f(c(k1) + c(f(k1) + c(k2) + c(f(k4) + c(f(k2) + c(k3) + c(f(k4) + c(f(k3) + c(k4) + c(f(k4) + c(k5)))))))))
 	};
+	cout << "fc[0] = " << fc[0] << endl;
+	cout << "fc[1] = " << fc[1] << endl;
+	cout << "fc[2] = " << fc[2] << endl;
+	cout << "fc[3] = " << fc[3] << endl;
+	cout << "fc[4] = " << fc[4] << endl;
+	cout << "fc[5] = " << fc[5] << endl;
 	xM.D.man = 0;
 	int n = (x.D.ex - 1023 + m + 53);
+	while (check_bit(fc[n / 32], 32 - n % 32)!=1) n++;                         ///Новый код
+	n++;
+	for (int i = 0; i < 53; i++)
+	{
+		xM.D.man += check_bit(fc[(n + i) / 32],(n + i) % 32) * pow(2, i);                         ///Новый код
+		cout << "XM.man bit " << i << " = " <<check_bit(fc[(n + i) / 32], (n + i) % 32) * pow(2, i) << endl; ///показывает одни нули
+	}
+	/*
 	for (int it1 = (x.D.ex - 1023 + m + 1) % 32; it1 < n; it1++)
 	{
 		if (it1 % 32 == 0 && it1!=0)
@@ -210,9 +228,12 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 		}
 		xM.D.man += fc[(x.D.ex - 1023 + m + 1) / 32] && pow(2,32-it1);
 	}
-
+	*/
 	
-	znak = (int(xM.D.man))%4;
+	znak = check_bit(fc[(x.D.ex - 1023 + m -1)/32],(x.D.ex - 1023 + m - 1) % 32) + check_bit(fc[(x.D.ex - 1023 + m - 2)/32],(x.D.ex - 1023 + m - 2)%32)*2;                         ///Новый код
+	znak = znak % 4;                                                         //znak всегда получается 0
+	cout << "Znak was: " << znak << endl;
+	
 	xM = xM * M_PI / 4.0;
 	x = xM;
 
