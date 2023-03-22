@@ -6,8 +6,10 @@
 
 int main()
 {
-	double x = 12.4124;
-	Floating_Point<11, 52> CO(x), SI(x), L(x);
+	double x = 15.2346321;
+	Floating_Point<11, 52> CO(x), SI(x), L(x), xx;
+
+
 
 	int x1 = 2;
 

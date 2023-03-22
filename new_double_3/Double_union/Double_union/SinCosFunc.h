@@ -118,7 +118,7 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 	int i2 = 0;
 	Floating_Point<e, m> PI4X = 0,k, X = x / pow(2, int(x.D.ex - m - 1));
 
-
+	jk = 1023-jk;
 	// index: DIV_2_ON_PI[jk/32]:DIV_2_ON_PI[jk/32+4] ->M[0]:M[3]
 // bit: DIV_2_ON_PI[jk:((jk+31)/32)*32] -> M[0:x]
 // bit: DIV_2_ON_PI[((jk+31)/32)*32:((jk+31)/32)*32+32] -> M[0][x:32] и M[1][0:x]
@@ -209,15 +209,19 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 	cout << "fc[3] = " << fc[3] << endl;
 	cout << "fc[4] = " << fc[4] << endl;
 	cout << "fc[5] = " << fc[5] << endl;
-	xM.D.man = 0;
+
 	int n = (x.D.ex - 1023 + m + 53);
 	while (check_bit(fc[n / 32], 32 - n % 32)!=1) n++;                         ///Новый код
 	n++;
+
 	for (int i = 0; i < 53; i++)
 	{
 		xM.D.man += check_bit(fc[(n + i) / 32],(n + i) % 32) * pow(2, i);                         ///Новый код
 		cout << "XM.man bit " << i << " = " <<check_bit(fc[(n + i) / 32], (n + i) % 32) * pow(2, i) << endl; ///показывает одни нули
+
 	}
+	xM.D.ex = x.D.ex+m-1;
+	cout << "XM F: = " << xM.D.f << endl;
 	/*
 	for (int it1 = (x.D.ex - 1023 + m + 1) % 32; it1 < n; it1++)
 	{
@@ -234,10 +238,16 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 	znak = znak % 4;                                                         //znak всегда получается 0
 	cout << "Znak was: " << znak << endl;
 	
-	xM = xM * M_PI / 4.0;
-	x = xM;
 
-	cout << znak << endl;
+	xM.D.f = xM.D.f * (M_PI / 4.0);
+	
+	cout << xM.D.f << endl;
+	cout << x.D.f << endl;
+
+
+	cout << "sin XM  = " << fabs(sin(xM.D.f)) << endl;
+	cout << "sin x = " << fabs(sin(x.D.f)) << endl;
+
 	cout << "M[0]" << M[0] << endl;
 	cout << "M[1]" << M[1] << endl;
 	cout << "M[2]" << M[2] << endl;
