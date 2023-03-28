@@ -95,15 +95,15 @@ bool check_bit(const unsigned int digit,int number)
 
 
 
-unsigned int f(unsigned int x)
+unsigned int f(uint64_t x)
 {
-	x = x & 0x0000ffff;
+	x = x & 0x00000000ffffffff;
 	return x;
 }
 
-unsigned int c(unsigned int x)
+unsigned int c(uint64_t x)
 {
-	x = (x & 0xffff0000) >> 32;
+	x = (x & 0xffffffff00000000) >> 32;
 	return x;
 }
 
@@ -114,9 +114,11 @@ template<int e, int m>
 void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 {
 	
-	unsigned int M[4] = { 0,0,0,0 }, XMas[2] = {0,0}, p = 50, j = (x.D.ex - m - 1), i = j % 32, jk = j, J = 0, umn = 2 << (i - 1);
+	unsigned int M[4] = { 0,0,0,0 }, p = 50, j = (x.D.ex - m - 1), i = j % 32, jk = j, J = 0, umn = 2 << (i - 1);
 	int i2 = 0;
 	Floating_Point<e, m> PI4X = 0,k, X = x / pow(2, int(x.D.ex - m - 1));
+
+	uint64_t XMas[2] = { 0,0 };
 
 	jk = 1023-jk;
 	// index: DIV_2_ON_PI[jk/32]:DIV_2_ON_PI[jk/32+4] ->M[0]:M[3]
@@ -181,20 +183,20 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 
 //	X= x1 * 2^32   + x2
 
-	unsigned int x1 = XMas[0];
-	unsigned int x2 = XMas[1];
-	unsigned int k1 = x1 * M[1];
-	unsigned int k2 = (M[1] * x1 + M[0] * x2);
-	unsigned int k3 = (M[2] * x1 + M[1] * x2);
-	unsigned int k4 = (M[3] * x1 + M[2] * x2);
-	unsigned int k5 = M[3] * x2;
+	uint64_t x1 = XMas[0];
+	uint64_t x2 = XMas[1];
+	uint64_t k1 = x1 * M[1];
+	uint64_t k2 = (M[1] * x1 + M[0] * x2);
+	uint64_t k3 = (M[2] * x1 + M[1] * x2);
+	uint64_t k4 = (M[3] * x1 + M[2] * x2);
+	uint64_t k5 = M[3] * x2;
 
-	cout << "x1= " << x1 << " x2= " << x2 << endl;
-	cout << "k1= " << k1 << endl << "k2= " << k2 << endl << "k3= " << k3 << endl << "k4= " << k4 << endl << "k5= " << k5 << endl;
+//	cout << "x1= " << x1 << " x2= " << x2 << endl;
+//	cout << "k1= " << k1 << endl << "k2= " << k2 << endl << "k3= " << k3 << endl << "k4= " << k4 << endl << "k5= " << k5 << endl;
 
 	//f
 	//c
-	cout << "for " << x.D.ex-1023 + m + 1 << " to " << x.D.ex-1023 + m + 53 << endl;
+//	cout << "for " << x.D.ex-1023 + m + 1 << " to " << x.D.ex-1023 + m + 53 << endl;
 	unsigned int fc[] = { 
 		f(k5) ,
 		(f(f(k4) + c(k5))),
@@ -203,25 +205,29 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 		(f(f(k1) + c(k2) + c(f(k4) + c(f(k2) + c(k3) + c(f(k4) + c(f(k3) + c(k4) + c(f(k4) + c(k5)))))))),
 		(f(c(k1) + c(f(k1) + c(k2) + c(f(k4) + c(f(k2) + c(k3) + c(f(k4) + c(f(k3) + c(k4) + c(f(k4) + c(k5)))))))))
 	};
-	cout << "fc[0] = " << fc[0] << endl;
-	cout << "fc[1] = " << fc[1] << endl;
-	cout << "fc[2] = " << fc[2] << endl;
-	cout << "fc[3] = " << fc[3] << endl;
-	cout << "fc[4] = " << fc[4] << endl;
-	cout << "fc[5] = " << fc[5] << endl;
+//	cout << "fc[0] = " << fc[0] << endl;
+//	cout << "fc[1] = " << fc[1] << endl;
+//	cout << "fc[2] = " << fc[2] << endl;
+//	cout << "fc[3] = " << fc[3] << endl;
+//	cout << "fc[4] = " << fc[4] << endl;
+//	cout << "fc[5] = " << fc[5] << endl;
 
-	int n = (x.D.ex - 1023 + m + 53);
-	while (check_bit(fc[n / 32], 32 - n % 32)!=1) n++;                         ///Новый код
+	int n = (x.D.ex - 1023 + m + 53),nip = 0;
+	while (check_bit(fc[n / 32], 32 - n % 32) != 1)
+	{
+		nip++;
+		n++;
+	}///Новый код
 	n++;
 
 	for (int i = 0; i < 53; i++)
 	{
 		xM.D.man += check_bit(fc[(n + i) / 32],(n + i) % 32) * pow(2, i);                         ///Новый код
-		cout << "XM.man bit " << i << " = " <<check_bit(fc[(n + i) / 32], (n + i) % 32) * pow(2, i) << endl; ///показывает одни нули
+//		cout << "XM.man bit " << i << " = " <<check_bit(fc[(n + i) / 32], (n + i) % 32) * pow(2, i) << endl; ///показывает одни нули
 
 	}
-	xM.D.ex = x.D.ex+m-1;
-	cout << "XM F: = " << xM.D.f << endl;
+	xM.D.ex = 1023-nip;
+//	cout << "XM F: = " << xM.D.f << endl;
 	/*
 	for (int it1 = (x.D.ex - 1023 + m + 1) % 32; it1 < n; it1++)
 	{
@@ -239,23 +245,27 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 	cout << "Znak was: " << znak << endl;
 	
 
+
 	xM.D.f = xM.D.f * (M_PI / 4.0);
 	
-	cout << xM.D.f << endl;
-	cout << x.D.f << endl;
+//	cout << xM.D.f << endl;
+//	cout << x.D.f << endl;
 
+	cout << "X was:" << xM.D.f << endl;
+	cout << "sin XM  = " << sin(xM.D.f) << endl;
+	cout << "cos XM  = " << cos(xM.D.f) << endl;
+	cout << sin(xM.D.f) * sin(xM.D.f) + cos(xM.D.f) * cos(xM.D.f) << endl;
+	cout << "cos x = " << cos(x.D.f) << endl;
+	cout << "sin x = " << sin(x.D.f) << endl;
 
-	cout << "sin XM  = " << fabs(sin(xM.D.f)) << endl;
-	cout << "sin x = " << fabs(sin(x.D.f)) << endl;
-
-	cout << "M[0]" << M[0] << endl;
-	cout << "M[1]" << M[1] << endl;
-	cout << "M[2]" << M[2] << endl;
-	cout << "M[3]" << M[3] << endl;
+//	cout << "M[0]" << M[0] << endl;
+//	cout << "M[1]" << M[1] << endl;
+//	cout << "M[2]" << M[2] << endl;
+//	cout << "M[3]" << M[3] << endl;
 	
 
 
-
+	x = xM;
 
 
 
@@ -281,14 +291,17 @@ template<int e,int m>
 void redo_sin_cos(Floating_Point<e,m> &for_sin, Floating_Point<e,m> &for_cos, Floating_Point<e,m> x,int znak)
 {
 	
+
+
+
+
 	Floating_Point<e, m> last_sin, last_cos, next_sin, next_cos;
 
-
-	last_sin = x*(-1.0)*(znak==3||znak==4)+x*(znak==1||znak==2);
-	last_cos = 1.0 * (znak==1||znak==4) + (-1.0)*(znak==2||znak==3);
+	last_sin = x;
+	last_cos = 1.0;
 	for_sin = last_sin;
 	for_cos = last_cos;
-	
+
 	for (int i = 1; i < 4; i++)
 	{
 		next_sin = x * x / (2.0 * i) / (2.0 * i + 1) * (-1.0);
@@ -299,19 +312,25 @@ void redo_sin_cos(Floating_Point<e,m> &for_sin, Floating_Point<e,m> &for_cos, Fl
 		for_cos = MY_FMA(last_cos, next_cos, for_cos);
 		last_cos = last_cos * next_cos;
 	}
-	
+
 
 }
 
+
+
+
+
+
+
 template<int e, int m>
-Floating_Point<e, m> MY_SIN(Floating_Point<e,m> &x)
+Floating_Point<e, m> MY_SIN(Floating_Point<e, m>& x)
 {
 	int znak;
 	PAYNE_HANEK(x, znak);
 	int i = int(x.D.f * LuT[17] + 4);
-	Floating_Point<e, m> msin, mcos,Sign(xLuT[i]),y;
+	Floating_Point<e, m> msin, mcos, Sign(xLuT[i]), y;
 	y = x - xLuT[i];
-	redo_sin_cos(msin,mcos,y,znak);
+	redo_sin_cos(msin, mcos, y,znak);
 	return msin * LuT[i + 8] - mcos * LuT[i] * ~int((Sign.D.sign * (-2)));
 }
 template<int e, int m>
@@ -320,17 +339,11 @@ Floating_Point<e, m> MY_COS(Floating_Point<e, m>& x)
 	int znak;
 	PAYNE_HANEK(x, znak);
 	int i = int(x.D.f * LuT[17] + 4);
-	Floating_Point<e, m> msin, mcos, Sign(xLuT[i]),y;
+	Floating_Point<e, m> msin, mcos, Sign(xLuT[i]), y;
 	y = x - xLuT[i];
-	redo_sin_cos(msin, mcos, y,znak);
-	return mcos * LuT[i+8] + msin * LuT[i] * ~int((Sign.D.sign * (-2)));
+	redo_sin_cos(msin, mcos, y, znak);
+	return mcos * LuT[i + 8] + msin * LuT[i] * ~int((Sign.D.sign * (-2)));
 }
-
-
-
-
-
-
 
 
 
