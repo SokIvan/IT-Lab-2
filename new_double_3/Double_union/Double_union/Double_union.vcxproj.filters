@@ -26,5 +26,8 @@
     <ClInclude Include="SinCosFunc.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="Black_Sholz.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

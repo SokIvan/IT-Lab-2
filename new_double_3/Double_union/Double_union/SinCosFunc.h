@@ -42,38 +42,38 @@ double xLuT[8] =
 
 const unsigned int DIV_2_ON_PI[]
 {
-	2734261102 >> 1,
-	1313084713 >> 1,
-	4230436817 >> 1,
-	4113882560 >> 1,
-	3680671129 >> 1,
-	1011060801 >> 1,
-	4266746795 >> 1,
-	3736847713 >> 1,
-	3072618042 >> 1,
-	1112396512 >> 1,
-	105459434 >> 1,
-	164729372 >> 1,
-	4263373596 >> 1,
-	2972297022 >> 1,
-	3900847605 >> 1,
-	784024708 >> 1,
-	3919343654 >> 1,
-	3026157121 >> 1,
-	965858873 >> 1,
-	2203269620 >> 1,
-	2625920907 >> 1,
-	3187222587 >> 1,
-	536385535 >> 1,
-	3724908559 >> 1,
-	4012839307 >> 1,
-	1510632735 >> 1,
-	1832287951 >> 1,
-	667617719 >> 1,
-	1330003814 >> 1,
-	2657085997 >> 1,
-	1965537991 >> 1,
-	235 >> 1
+	2734261102 / 2,
+	1313084713 / 2,
+	4230436817 / 2,
+	4113882560 / 2,
+	3680671129 / 2,
+	1011060801 / 2,
+	4266746795 / 2,
+	3736847713 / 2,
+	3072618042 / 2,
+	1112396512 / 2,
+	105459434 / 2,
+	164729372 / 2,
+	4263373596 / 2,
+	2972297022 / 2,
+	3900847605 / 2,
+	784024708 / 2,
+	3919343654 / 2,
+	3026157121 / 2,
+	965858873 / 2,
+	2203269620 / 2,
+	2625920907 / 2,
+	3187222587 / 2,
+	536385535 / 2,
+	3724908559 / 2,
+	4012839307 / 2,
+	1510632735 / 2,
+	1832287951 / 2,
+	667617719 / 2,
+	1330003814 / 2,
+	2657085997 / 2,
+	1965537991 /2,
+	235 /2,
 };
 
 
@@ -103,7 +103,7 @@ unsigned int f(uint64_t x)
 
 unsigned int c(uint64_t x)
 {
-	x = (x & 0xffffffff00000000) >> 32;
+	x = (x >> 32) & 0x00000000ffffffff;
 	return x;
 }
 
@@ -114,9 +114,9 @@ template<int e, int m>
 void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 {
 	
-	unsigned int M[4] = { 0,0,0,0 }, p = 50, j = (x.D.ex - m - 1), i = j % 32, jk = j, J = 0, umn = 2 << (i - 1);
-	int i2 = 0;
-	Floating_Point<e, m> PI4X = 0,k, X = x / pow(2, int(x.D.ex - m - 1));
+	unsigned int M[4] = { 0,0,0,0 },j = (x.D.ex - m - 1), jk = j;
+	//int i2 = 0;
+	//Floating_Point<e, m> PI4X = 0,k, X = x / pow(2, int(x.D.ex - m - 1));
 
 	uint64_t XMas[2] = { 0,0 };
 
@@ -136,14 +136,18 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 			M[s] += check_bit(DIV_2_ON_PI[((it + 31) / 32) * 32], it % 32);
 		}
 		*/
-	for (int i = 0; i < 128; i++)
+	int i = 0;
+	for (; i < 128; i++)
 	{
 		M[i / 32] += check_bit(DIV_2_ON_PI[(i + jk) / 32],(i+jk)%32) * pow(2,i%32);                         ///Новый код
-	}                                                                         /// M[1] и M[2] всегда получаются 0
+	}         
 
 
-
-
+	for (int n_M = 0; n_M < 4; n_M++)
+	{
+		cout << endl << "M[" << n_M << "] = " << M[n_M];
+	}
+	cout << endl<<endl;
 	/*
 	while (jk < (x.D.ex + m + 1 + p))
 	{
@@ -158,9 +162,12 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 		i = 0;
 	}
 	*/
-	umn = 2 << 30;
-	XMas[1] = X.D.man & 0x00000000ffffffff;
-	XMas[0] = (X.D.man >> 32) & 0x00000000ffffffff;
+	//umn = 2 << 30;
+	XMas[1] = x.D.man & 0x00000000ffffffff;
+	XMas[0] = (x.D.man >> 32) & 0x00000000ffffffff;
+
+
+	cout << endl << endl << " XMas[1] = " << XMas[1] << endl << " XMas[0] = " << XMas[0] << endl << endl;
 	/*
 	for (i = 0; i < 32; i++)
 	{
@@ -185,11 +192,19 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 
 	uint64_t x1 = XMas[0];
 	uint64_t x2 = XMas[1];
-	uint64_t k1 = x1 * M[1];
+	uint64_t k1 = x1 * M[0];                  //---------------------------------{ M[1] ---> M[0] }
 	uint64_t k2 = (M[1] * x1 + M[0] * x2);
 	uint64_t k3 = (M[2] * x1 + M[1] * x2);
 	uint64_t k4 = (M[3] * x1 + M[2] * x2);
 	uint64_t k5 = M[3] * x2;
+
+	cout << " x1 = "<< x1 <<endl;
+	cout << " x2 = "<< x2 <<endl;
+	cout << " k1 = "<< k1 <<endl;
+	cout << " k2 = "<< k2 <<endl;
+	cout << " k3 = "<< k3 <<endl;
+	cout << " k4 = "<< k4 <<endl;
+	cout << " k5 = "<< k5 <<endl;
 
 //	cout << "x1= " << x1 << " x2= " << x2 << endl;
 //	cout << "k1= " << k1 << endl << "k2= " << k2 << endl << "k3= " << k3 << endl << "k4= " << k4 << endl << "k5= " << k5 << endl;
@@ -197,7 +212,9 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 	//f
 	//c
 //	cout << "for " << x.D.ex-1023 + m + 1 << " to " << x.D.ex-1023 + m + 53 << endl;
-	unsigned int fc[] = { 
+
+		/*
+	unsigned int fc[] = {
 		f(k5) ,
 		(f(f(k4) + c(k5))),
 		(f(f(k3) + c(k4) + c(f(k4) + c(k5)))),
@@ -205,27 +222,50 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 		(f(f(k1) + c(k2) + c(f(k4) + c(f(k2) + c(k3) + c(f(k4) + c(f(k3) + c(k4) + c(f(k4) + c(k5)))))))),
 		(f(c(k1) + c(f(k1) + c(k2) + c(f(k4) + c(f(k2) + c(k3) + c(f(k4) + c(f(k3) + c(k4) + c(f(k4) + c(k5)))))))))
 	};
-//	cout << "fc[0] = " << fc[0] << endl;
-//	cout << "fc[1] = " << fc[1] << endl;
-//	cout << "fc[2] = " << fc[2] << endl;
-//	cout << "fc[3] = " << fc[3] << endl;
-//	cout << "fc[4] = " << fc[4] << endl;
-//	cout << "fc[5] = " << fc[5] << endl;
+		*/
+
+	unsigned int fc[] = {
+		f(k5) ,
+		f(k4 + c(k5) ),
+		f(k3 + c(k4) ),
+		f(k2 + c(k3) ),
+		f(k1 + c(k2) ),
+		c(k1)
+	};
+
+
+
+	cout << "fc[0] = " << fc[0] << endl;
+	cout << "fc[1] = " << fc[1] << endl;
+	cout << "fc[2] = " << fc[2] << endl;
+	cout << "fc[3] = " << fc[3] << endl;
+	cout << "fc[4] = " << fc[4] << endl;
+	cout << "fc[5] = " << fc[5] << endl;
+
+
 
 	int n = (x.D.ex - 1023 + m + 53),nip = 0;
+	cout << "Before man: ";
 	while (check_bit(fc[n / 32], 32 - n % 32) != 1)
 	{
+		cout << check_bit(fc[n / 32], 32 - n % 32);
 		nip++;
 		n++;
+
 	}///Новый код
 	n++;
-
+	cout << endl << "N+ was : " << nip << endl;
+	cout << endl << "Man:";
 	for (int i = 0; i < 53; i++)
 	{
-		xM.D.man += check_bit(fc[(n + i) / 32],(n + i) % 32) * pow(2, i);                         ///Новый код
+		xM.D.man += check_bit(fc[(n + i) / 32],(n + i) % 32) * pow(2, i);        
+		cout << check_bit(fc[(n + i) / 32], (n + i) % 32);
+		///Новый код
 //		cout << "XM.man bit " << i << " = " <<check_bit(fc[(n + i) / 32], (n + i) % 32) * pow(2, i) << endl; ///показывает одни нули
 
 	}
+	cout << endl;
+	
 	xM.D.ex = 1023-nip;
 //	cout << "XM F: = " << xM.D.f << endl;
 	/*
@@ -239,24 +279,37 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 		xM.D.man += fc[(x.D.ex - 1023 + m + 1) / 32] && pow(2,32-it1);
 	}
 	*/
-	
-	znak = check_bit(fc[(x.D.ex - 1023 + m -1)/32],(x.D.ex - 1023 + m - 1) % 32) + check_bit(fc[(x.D.ex - 1023 + m - 2)/32],(x.D.ex - 1023 + m - 2)%32)*2;                         ///Новый код
-	znak = znak % 4;                                                         //znak всегда получается 0
+	cout <<endl<<endl<<" xM = "<< xM.D.f << endl << endl;
+	znak = check_bit(fc[(x.D.ex - 1023 + m-1)/32],(x.D.ex - 1023 + m-1 ) % 32) + check_bit(fc[(x.D.ex - 1023 + m - 2)/32],(x.D.ex - 1023 + m - 2)%32)*2;                         ///Новый код
+	znak = znak % 4;                                                         
 	cout << "Znak was: " << znak << endl;
 	
+	cout << "XM for znak was: " << xM.D.f << endl;
+	cout << "1*PI/2 =  " << 1*M_PI_2 << " znak = 0" << endl;
+	cout << "2*PI/2 =  " << 2*M_PI_2 << " znak = 1" << endl;
+	cout << "3*PI/2 =  " << 3*M_PI_2 << " znak = 2" << endl;
+	cout << "4*PI/2 =  " << 4*M_PI_2 << " znak = 3" << endl;
+
+	cout <<endl<< "XM = " << xM.D.f << endl<<endl;
 
 
-	xM.D.f = xM.D.f * (M_PI / 4.0);
+		xM.D.f = (xM.D.f / M_PI_4);
+	
+		
+
+	
 	
 //	cout << xM.D.f << endl;
 //	cout << x.D.f << endl;
 
-	cout << "X was:" << xM.D.f << endl;
-	cout << "sin XM  = " << sin(xM.D.f) << endl;
+	cout << "XM = " << xM.D.f << endl;
 	cout << "cos XM  = " << cos(xM.D.f) << endl;
+	cout << "sin XM  = " << sin(xM.D.f) << endl;
 	cout << sin(xM.D.f) * sin(xM.D.f) + cos(xM.D.f) * cos(xM.D.f) << endl;
 	cout << "cos x = " << cos(x.D.f) << endl;
 	cout << "sin x = " << sin(x.D.f) << endl;
+	cout << "Difference sin: " << sin(xM.D.f) - sin(x.D.f) << endl;
+	cout << "Difference cos: " << cos(xM.D.f) - cos(x.D.f) << endl;
 
 //	cout << "M[0]" << M[0] << endl;
 //	cout << "M[1]" << M[1] << endl;
@@ -401,7 +454,7 @@ public:
 
 		Floating_Point<e,m> t = 1 / (1 + p * x.D.f);
 
-		x = x.exp_function(10);
+		x = exp_function(x,10);
 		Floating_Point<e,m> ex = x.D.f;
 		ex = ex* ex;
 		ex = 1 / ex.D.f; // e^(-x^2)
@@ -412,11 +465,10 @@ public:
 };
 
 template<int e,int m>
-Floating_Point<e, m> Erf_func(Floating_Point<e,m>& x)
+Floating_Point<e, m> Erf_func(Floating_Point<e,m> x)
 {
 	ERFi<e, m> xret;
-	xret = xret.Erf(x);
-	return xret;
+	return xret.Erf(x);
 }
 
 

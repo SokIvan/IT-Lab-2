@@ -123,9 +123,6 @@ public:
 
 
 
-
-
-
     void get_double() noexcept
     {
         cout << "Double: " << D.f << endl;
@@ -147,10 +144,27 @@ public:
 
 
 
+
+
 template<int e, int m>
-Floating_Point<e, m> exp_function(size_t n) // n - ammount of elements in Mcloren
+Floating_Point<e,m> SQRT(Floating_Point<e, m> al)
 {
-    Floating_Point<e, m> a(*this);
+    Floating_Point<e, m> res(al);
+    res.D.f = sqrt(res.D.f);
+    return res;
+}
+template<int e, int m>
+Floating_Point<e, m> INVSQRT(Floating_Point<e, m> al)
+{
+    Floating_Point<e, m> res(al);
+    res.D.f = 1.0 / sqrt(res.D.f);
+    return res;
+}
+
+template<int e, int m>
+Floating_Point<e, m> exp_function(Floating_Point<e, m> al,size_t n) // n - ammount of elements in Mcloren
+{
+    Floating_Point<e, m> a(al);
     a = a * log2(exp(1.0));
     int ipart = ROUND(a + 0.5);
     Floating_Point<e, m> fpart = (a.D.f - ipart) * log(2.0);//x*ln2
@@ -173,7 +187,7 @@ Floating_Point<e, m> exp_function(size_t n) // n - ammount of elements in Mclore
 
 
 template<int e, int m>
-Floating_Point<e, m> Log2(Floating_Point<e, m>& a)
+Floating_Point<e, m> Log2(Floating_Point<e, m> a)
 {
     Floating_Point<e, m> q(a);
     double n1 = log2(1.5);
