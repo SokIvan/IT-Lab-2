@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Black_Sholz.h" />
+    <ClInclude Include="Chernovik.h" />
     <ClInclude Include="Floating_Point.h" />
     <ClInclude Include="SinCosFunc.h" />
   </ItemGroup>

@@ -108,9 +108,10 @@ public:
     {
         D.man &= (get_mask() * Check_expMAX());
         D.ex |= ((1 << 11) - 1) * (unsigned long long int)!(Check_expMAX());
-
+        
         D.man &= (get_mask() * Check_expMIN());
         D.ex &= ((1 << 11) - 1) * (unsigned long long int)(Check_expMIN());
+
     }
 
     void CHECK_EXP_AND_MAN() noexcept
