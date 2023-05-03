@@ -193,7 +193,8 @@ Floating_Point<e, m> Log2(Floating_Point<e, m> a)
     Floating_Point<e, m> q(a);
     double n1 = log2(1.5);
     double n2 = log(2);
-    q.D.f = q.D.f / (2 << (q.D.ex - 1023 - 1));
+    int sdvig = ((q.D.ex - 1023 - 1));
+    q.D.f = q.D.f / pow(2,sdvig);
     q.D.f = q.D.f / 1.5;
     q.D.f = q.D.f - 1.0;
     Floating_Point<e, m> mclrn = q.D.f;
@@ -207,7 +208,9 @@ Floating_Point<e, m> Log2(Floating_Point<e, m> a)
     }
 
 
-    a = (mclrn) / n2 + n1 + (a.D.ex - 1023);
+
+    a = (mclrn) / n2 + n1 + sdvig;
+
 
     return a;
 }

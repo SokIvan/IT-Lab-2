@@ -114,9 +114,15 @@ unsigned int c(uint64_t x)
 template<int e, int m>
 void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 {
-	
-	unsigned int M[4] = { 0,0,0,0 },j = (x.D.ex - m - 1), jk = j;
 
+
+	cout << endl << endl << endl << "------------| x.D.ex = " << x.D.ex << endl << endl << endl;
+
+//|===------------===|  [ Корень зла ]  |===---------------------------------===|
+																			  //|
+	unsigned int M[4] = { 0,0,0,0 },j =  ( (-1)*x.D.ex + 1023 + m + 1), jk = j;  //|           
+																			  //|
+//|===-----------------------------------------------------------------------===|
 
 	// e=11   m=52
 	//D.ex=1026
@@ -128,7 +134,7 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 
 	uint64_t XMas[2] = { 0,0 };
 
-	jk = 1023-jk;
+	//jk = 1023-jk;                                                       *****Changed*****
 
 	cout << endl << "jk=" << jk << endl;
 
@@ -138,10 +144,10 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 	for (int i = 0; i < 128; i++)
 	{
 
-			M[i / 32] += check_bit(DIV_2_ON_PI[(i + jk) / 32], (i + jk) % 32) * pow(2, i % 32);
+		M[i / 32] += check_bit(DIV_2_ON_PI[(jk + i) / 32], (jk + i) % 32) * pow(2, i % 32);
                    
 	}         
-	//----------------До этого всё правильно-----------------------
+	//---------------------------------------------------------------------------------------------------
 
 	for (int n_M = 0; n_M < 4; n_M++)
 	{
@@ -264,7 +270,7 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 
 
 
-		xM.D.f = (xM.D.f / M_PI_4);
+		xM.D.f = (xM.D.f / M_PI_2);
 	
 
 	
