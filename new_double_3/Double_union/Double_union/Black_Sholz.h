@@ -1,13 +1,13 @@
 #include "SinCosFunc.h"
-#pragma simd
 
 
-#pragma omp parallel for simd
+
+
 template<int e, int m>                   // PT                        PK                       PS0                        PC
 void Get_Optional_Price(Floating_Point<e, m>* m1, Floating_Point<e, m>* m2, Floating_Point<e, m>* m3, Floating_Point<e, m>* m4, int size)
 {
 	Floating_Point<e, m> r = 0.11, sig = 0.3, d1, d2, sig2_05 = sig * sig * 0.5, invf, e1, e2;
-
+#pragma omp parallel for simd
 	for (int i = 0; i < size; i++)
 	{
 		invf = INVSQRT(sig2_05 * m1[i] * 2);
@@ -23,12 +23,12 @@ void Get_Optional_Price(Floating_Point<e, m>* m1, Floating_Point<e, m>* m2, Floa
 	}
 }
 
-#pragma omp parallel for simd
+
 template<int e, int m>                   // PT                        PK                       PS0                        PC
 void Get_Optional_Price_STD(Floating_Point<e, m>* m1, Floating_Point<e, m>* m2, Floating_Point<e, m>* m3, Floating_Point<e, m>* m4, int size)
 {
 	Floating_Point<e, m> r = 0.11, sig = 0.3, d1, d2, sig2_05 = sig * sig * 0.5, invf, e1, e2;
-
+#pragma omp parallel for simd
 	for (int i = 0; i < size; i++)
 	{
 		invf = INVSQRT(sig2_05 * m1[i] * 2);
@@ -44,3 +44,4 @@ void Get_Optional_Price_STD(Floating_Point<e, m>* m1, Floating_Point<e, m>* m2, 
 		//cout << "M4["<< i << "](std) is: " << m4[i].D.f << endl;
 	}
 }
+

@@ -42,38 +42,38 @@ double xLuT[8] =
 
 const unsigned int DIV_2_ON_PI[]
 {
-	2734261102/2 ,
-	1313084713/2 ,
-	4230436817/2 ,
-	4113882560/2 ,
-	3680671129/2 ,
-	1011060801/2 ,
-	4266746795 / 2,
-	3736847713 / 2,
-	3072618042 / 2,
-	1112396512 / 2,
-	105459434 / 2,
-	164729372 / 2,
-	4263373596 / 2,
-	2972297022 / 2,
-	3900847605 / 2,
-	784024708 / 2,
-	3919343654 / 2,
-	3026157121 / 2,
-	965858873 / 2,
-	2203269620 / 2,
-	2625920907 / 2,
-	3187222587 / 2,
-	536385535 / 2,
-	3724908559 / 2,
-	4012839307 / 2,
-	1510632735 / 2,
-	1832287951 / 2,
-	667617719 / 2,
-	1330003814 / 2,
-	2657085997 / 2,
-	1965537991 /2,
-	235 /2,
+	1367130551 ,//ok 1
+	656542356  ,//ok 2
+	4262702056 ,//ok 3
+	4204424928 ,//ok 4
+	1840335564 ,//ok 5
+	2653014048 ,//ok 6 
+	4280857045 ,//ok 7
+	4015907504 ,//ok 8
+	3683792669 ,//ok 9
+	556198256  ,//ok 10
+	52729717   ,//ok 11
+	82364686   ,//ok 12
+	2131686798 ,//ok 13
+	1486148511 ,//ok 14
+	1950423802 ,//ok 15
+	2539496002 ,//ok 16
+	1959671827 ,//ok 17
+	1513078560 ,//ok 18
+	2630413084 ,//ok 19
+	3249118458 ,//ok 20
+	1312960453 ,//ok 21
+	3741094941 ,//ok 22
+	2415676415 ,//ok 23
+	4009937927 ,//ok 24
+	4153903301 ,//ok 25
+	2902800015 ,//ok 26
+	3063627623 ,//ok 27
+	2481292507 ,//ok 28
+	2812485555 ,//ok 29
+	1328542998 ,//ok 30
+	3130252643 ,//ok 31
+	245 ,       //ok 32
 };
 
 
@@ -120,7 +120,7 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 
 //|===------------===|  [ Корень зла ]  |===---------------------------------===|
 																			  //|
-	unsigned int M[4] = { 0,0,0,0 },j =  ( (-1)*x.D.ex + 1023 + m + 1), jk = j;  //|           
+	unsigned int M[4] = { 0,0,0,0 }, j = ((-1) * x.D.ex + 1023 + m - 1), jk = j;//50;//j;  //|           
 																			  //|
 //|===-----------------------------------------------------------------------===|
 
@@ -141,7 +141,7 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 		
 
 
-	for (int i = 0; i < 128; i++)
+	for (int i = 0; i < 2*m+22; i++)
 	{
 
 		M[i / 32] += check_bit(DIV_2_ON_PI[(jk + i) / 32], (jk + i) % 32) * pow(2, i % 32);
@@ -252,7 +252,7 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 
 
 	cout << endl << "--------------------" << endl << "XM = " << xM.D.f << endl << "--------------------"  << endl << endl;
-	znak = check_bit(fc[(x.D.ex - 1023 + m-1)/32],(x.D.ex - 1023 + m-1 ) % 32) + check_bit(fc[(x.D.ex - 1023 + m - 2)/32],(x.D.ex - 1023 + m - 2)%32)*2;                         ///Новый код
+	znak =check_bit(fc[(x.D.ex - 1023 + m-1)/32],(x.D.ex - 1023 + m-1 ) % 32) + check_bit(fc[(x.D.ex - 1023 + m - 2)/32],(x.D.ex - 1023 + m - 2)%32);    //*2                     ///Новый код
 	znak = znak % 4;                                                         
 	cout << "Znak was: " << znak << endl;
 	
@@ -267,17 +267,20 @@ void PAYNE_HANEK(Floating_Point<e, m>& x, int &znak)
 
 
 
-
+	double pp = x.D.f / M_PI_2;
+	int p = ceil(pp) - 1;
+	p %= 4;
 
 
 		xM.D.f = (xM.D.f / M_PI_2);
 	
-
+		double war = 2.052832;
 	
 		cout << endl << "--------------------" << endl << "XM = " << xM.D.f << endl << "--------------------"  << endl << endl;
 	cout << "cos XM  = " << cos(xM.D.f) << endl;
 	cout << "sin XM  = " << sin(xM.D.f) << endl;
-	cout << sin(xM.D.f) * sin(xM.D.f) + cos(xM.D.f) * cos(xM.D.f) << endl;
+	cout << "cos XM(war)  = " << cos(xM.D.f+p*M_PI_2) << endl;
+	cout << "sin XM(war)  = " << sin(xM.D.f + p * M_PI_2) << endl;
 	cout << "cos x = " << cos(x.D.f) << endl;
 	cout << "sin x = " << sin(x.D.f) << endl;
 	cout << "Difference sin: " << sin(xM.D.f) - sin(x.D.f) << endl;
@@ -351,7 +354,7 @@ void redo_sin_cos(Floating_Point<e,m> &for_sin, Floating_Point<e,m> &for_cos, Fl
 
 
 
-
+//-------------------------------------------------------------------------------------
 
 template<int e, int m>
 Floating_Point<e, m> MY_SIN(Floating_Point<e, m>& x)
@@ -376,7 +379,7 @@ Floating_Point<e, m> MY_COS(Floating_Point<e, m>& x)
 	return mcos * LuT[i + 8] + msin * LuT[i] * ~int((Sign.D.sign * (-2)));
 }
 
-
+//-------------------------------------------------------------------------------------
 
 
 
